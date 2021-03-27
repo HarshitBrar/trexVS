@@ -37,7 +37,7 @@ function setup() {
   createCanvas(windowWidth - 50,windowHeight - 50);
   
   trex = createSprite(50,windowHeight - 70,20,50);
-  trex.x = width/2;
+  trex.x = width/2 + 200;
   trex.addAnimation("running", trex_running);
   trex.addAnimation("collided", trex_collided);
   trex.scale = 0.5;
@@ -64,7 +64,7 @@ function setup() {
   gameOver.visible = false;
   restart.visible = false;
   
-  invisibleGround = createSprite(ground.width/2,windowHeight-55,windowWidth,10);
+  invisibleGround = createSprite(ground.width/2,windowHeight-55,ground.width,10);
   invisibleGround.visible = true;
   
   cloudsGroup = new Group();
@@ -84,7 +84,7 @@ function draw() {
     camera.position.x = trex.x;
     trex.velocityX = trex.velocityX + 0.05;
   
-    if(keyDown("space") && trex.y >= windowHeight-80) {
+    if(keyDown("space")) {
       trex.velocityY = -12;
     }
   
@@ -93,7 +93,9 @@ function draw() {
     if (ground.x < 0){
       ground.x = ground.width/2;
     }
-  
+    
+    if (camera.position.x + width / 2 > ground.x + ground.width / 2) { ground.x = camera.position.x; invisibleGround.x = camera.position.x; }
+
     trex.collide(invisibleGround);
     spawnClouds();
     spawnObstacles();
@@ -119,7 +121,8 @@ function draw() {
     //set lifetime of the game objects so that they are never destroyed
     obstaclesGroup.setLifetimeEach(-1);
     cloudsGroup.setLifetimeEach(-1);
-    
+    gameOver.x = trex.x;
+    restart.x = trex.x;
     if(mousePressedOver(restart)) {
       reset();
     }
@@ -153,7 +156,7 @@ function spawnClouds() {
 
 function spawnObstacles() {
   if(frameCount % 60 === 0) {
-    var obstacle = createSprite(camer.position.x + windowWidth/2,windowHeight - 60,10,40);
+    var obstacle = createSprite(camera.position.x + windowWidth/2,windowHeight - 80,10,40);
     //obstacle.debug = true;
     //obstacle.velocityX = -(6 + 3*score/100);
     
